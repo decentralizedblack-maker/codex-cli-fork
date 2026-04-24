@@ -5444,6 +5444,9 @@ impl App {
                     }
                 }
             }
+            AppEvent::UpdateApprovalsReviewerForSession(policy) => {
+                self.set_approvals_reviewer_in_app_and_widget(policy);
+            }
             AppEvent::UpdateApprovalsReviewer(policy) => {
                 self.config.approvals_reviewer = policy;
                 self.chat_widget.set_approvals_reviewer(policy);

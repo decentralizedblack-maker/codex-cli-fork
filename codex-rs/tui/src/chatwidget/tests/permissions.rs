@@ -565,7 +565,7 @@ async fn permissions_selection_can_disable_guardian_approvals() {
     assert!(
         events.iter().any(|event| matches!(
             event,
-            AppEvent::UpdateApprovalsReviewer(ApprovalsReviewer::User)
+            AppEvent::UpdateApprovalsReviewerForSession(ApprovalsReviewer::User)
         )),
         "expected selecting Default from Guardian Approvals to switch back to manual approval review: {events:?}"
     );
@@ -693,7 +693,27 @@ async fn permissions_full_access_history_cell_emitted_only_after_confirmation() 
     );
 
     chat.handle_key_event(KeyEvent::from(KeyCode::Enter));
-    let cells_after_confirmation = drain_insert_history(&mut rx);
+    let events_after_confirmation = std::iter::from_fn(|| rx.try_recv().ok()).collect::<Vec<_>>();
+    assert!(
+        events_after_confirmation.iter().any(|event| matches!(
+            event,
+            AppEvent::UpdateApprovalsReviewerForSession(ApprovalsReviewer::User)
+        )),
+        "expected full access confirmation to update the reviewer for this session: {events_after_confirmation:?}"
+    );
+    assert!(
+        !events_after_confirmation
+            .iter()
+            .any(|event| matches!(event, AppEvent::UpdateApprovalsReviewer(_))),
+        "session-only full access confirmation must not persist approvals_reviewer: {events_after_confirmation:?}"
+    );
+    let cells_after_confirmation = events_after_confirmation
+        .into_iter()
+        .filter_map(|event| match event {
+            AppEvent::InsertHistoryCell(cell) => Some(cell.display_lines(/*width*/ 80)),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
     let total_history_cells = cells_before_confirmation.len() + cells_after_confirmation.len();
     assert_eq!(
         total_history_cells, 1,
