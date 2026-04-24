@@ -701,12 +701,6 @@ async fn permissions_full_access_history_cell_emitted_only_after_confirmation() 
         )),
         "expected full access confirmation to update the reviewer for this session: {events_after_confirmation:?}"
     );
-    assert!(
-        !events_after_confirmation
-            .iter()
-            .any(|event| matches!(event, AppEvent::UpdateApprovalsReviewer(_))),
-        "session-only full access confirmation must not persist approvals_reviewer: {events_after_confirmation:?}"
-    );
     let cells_after_confirmation = events_after_confirmation
         .into_iter()
         .filter_map(|event| match event {

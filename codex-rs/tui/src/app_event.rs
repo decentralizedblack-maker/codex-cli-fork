@@ -462,9 +462,6 @@ pub(crate) enum AppEvent {
     /// Update the current approvals reviewer in the running app and widget for this session only.
     UpdateApprovalsReviewerForSession(ApprovalsReviewer),
 
-    /// Update the current approvals reviewer and persist it to config.toml.
-    UpdateApprovalsReviewer(ApprovalsReviewer),
-
     /// Update feature flags and persist them to the top-level config.
     UpdateFeatureFlags {
         updates: Vec<(Feature, bool)>,
