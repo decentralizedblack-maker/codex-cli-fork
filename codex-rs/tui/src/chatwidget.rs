@@ -8599,7 +8599,9 @@ impl ChatWidget {
             ));
             tx.send(AppEvent::UpdateAskForApprovalPolicy(approval));
             tx.send(AppEvent::UpdateSandboxPolicy(sandbox_clone));
-            tx.send(AppEvent::UpdateApprovalsReviewerForSession(approvals_reviewer));
+            tx.send(AppEvent::UpdateApprovalsReviewerForSession(
+                approvals_reviewer,
+            ));
             tx.send(AppEvent::InsertHistoryCell(Box::new(
                 history_cell::new_info_event(
                     format!("Permissions updated to {label}"),
